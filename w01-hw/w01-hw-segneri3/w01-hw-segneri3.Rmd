@@ -1,0 +1,306 @@
+---
+title: "Week 1 - Homework"
+author: "STAT 420, Summer 2018, Connor Segneri - segneri3"
+date: ''
+output:
+  html_document: 
+    toc: yes
+  pdf_document: default
+urlcolor: cyan
+---
+
+
+***
+
+## Exercise 1 (Subsetting and Statistics)
+
+For this exercise, we will use the `msleep` dataset from the `ggplot2` package.
+
+**(a)** Install and load the `ggplot2` package. **Do not** include the installation command in your `.Rmd` file. (If you do it will install the package every time you knit your file.) **Do** include the command to load the package into your environment.
+
+```{r message=FALSE, warning=FALSE}
+library(ggplot2)
+```
+
+**(b)** Note that this dataset is technically a `tibble`, not a data frame. How many observations are in this dataset? How many variables? What are the observations in this dataset?
+
+```{r message=FALSE, warning=FALSE}
+str(msleep)
+```
+
+There are 83 observations of 11 variables in this dataset. The observations describe the time spent awake and asleep for various mammals taken from V. M. Savage and G. B. West. A quantitative, theoretical framework for understanding mammalian sleep. Proceedings of the National Academy of Sciences, 104 (3):1051-1056, 2007.
+
+**(c)** What is the mean hours of REM sleep of individuals in this dataset?
+
+```{r message=FALSE, warning=FALSE}
+rem.mean = mean(msleep$sleep_rem, na.rm = TRUE)
+
+rem.mean
+```
+
+The mean hours of rem sleep is ``r rem.mean``.
+
+**(d)** What is the standard deviation of brain weight of individuals in this dataset?
+
+```{r message=FALSE, warning=FALSE}
+brainwt.sd = sd(msleep$brainwt, na.rm = TRUE)
+
+brainwt.sd
+```
+
+The standard deviation of brain weight is ``r brainwt.sd`` kg.
+
+**(e)** Which observation (provide the `name`) in this dataset gets the most REM sleep?
+
+```{r message=FALSE, warning=FALSE}
+rem.max.pos = which.max(msleep$sleep_rem)
+
+rem.max = msleep$sleep_rem[rem.max.pos]
+
+rem.max.name = msleep$name[rem.max.pos]
+
+rem.max.name
+```
+
+The ``r rem.max.name`` gets the most rem sleep, at ``r rem.max`` hours.
+
+**(f)** What is the average bodyweight of carnivores in this dataset?
+
+```{r message=FALSE, warning=FALSE}
+bodywt.carn.mean = mean(msleep$bodywt[msleep$vore == 'carni'], na.rm = TRUE)
+
+bodywt.carn.mean
+```
+
+The average bodyweight of carnivors in this dataset is ``r bodywt.carn.mean`` kg.
+
+***
+
+## Exercise 2 (Plotting)
+
+For this exercise, we will use the `birthwt` dataset from the `MASS` package.
+
+```{r message=FALSE, warning=FALSE}
+library(MASS)
+```
+
+**(a)** Note that this dataset is a data frame and all of the variables are numeric. How many observations are in this dataset? How many variables? What are the observations in this dataset?
+
+```{r message=FALSE, warning=FALSE}
+str(birthwt)
+```
+
+There are 189 observations of 10 variables in this dataset. This dataset describes births collected from the Baystate Medical Center, Springfield, Massachusetts during 1986.
+
+**(b)** Create a scatter plot of birth weight (y-axis) vs mother's weight before pregnancy (x-axis). Use a non-default color for the points. (Also, be sure to give the plot a title and label the axes appropriately.) Based on the scatter plot, does there seem to be a relationship between the two variables? Briefly explain.
+
+```{r message=FALSE, warning=FALSE, fig.align='center'}
+ggplot(birthwt, aes(x=lwt, y=bwt)) +
+  geom_point(color = "red") +
+  labs(title = "Birth Weight VS Mother's Weight Before Pregnancy",
+       x = "Mother's Weight Before Pregnancy", y = "Birth Weight (grams)")
+```
+
+Based on the scatterplot it seems like there is a relationship between the variables. There are less births in general for women who weighed more before pregnancy. Also it seems that the more the mother weighed before pregnancy, the heavier the baby was likely to be.
+
+**(c)** Create a scatter plot of birth weight (y-axis) vs mother's age (x-axis). Use a non-default color for the points. (Also, be sure to give the plot a title and label the axes appropriately.) Based on the scatter plot, does there seem to be a relationship between the two variables? Briefly explain.
+
+```{r message=FALSE, warning=FALSE, fig.align='center'}
+ggplot(birthwt, aes(x=age, y=bwt)) +
+  geom_point(color = "red") +
+  labs(title = "Birth Weight VS Mother's Age",
+       x = "Mother's Age", y = "Birth Weight (grams)")
+```
+
+There doesn't seem to be a strong relationship between birth weight and the mother's age. As the mother's age increases, the birth weight decreases, but only slightly.
+
+
+**(d)** Create side-by-side boxplots for birth weight grouped by smoking status. Use non-default colors for the plot. (Also, be sure to give the plot a title and label the axes appropriately.) Based on the boxplot, does there seem to be a difference in birth weight for mothers who smoked? Briefly explain.
+
+```{r message=FALSE, warning=FALSE, fig.align='center'}
+ggplot(birthwt, aes(x=as.factor(smoke), y=bwt)) +
+  geom_boxplot(color = "red") +
+  labs(title = "Birth Weight VS Mother's Smoking Status",
+       x = "Mother's Smoking Status", y = "Birth Weight (grams)")
+```
+
+Based on the boxplots, mothers who don't smoke are more likely to have babies that weigh more.
+
+***
+
+## Exercise 3 (Importing Data, More Plotting)
+
+For this exercise we will use the data stored in [`nutrition-2018.csv`](nutrition-2018.csv). It contains the nutritional values per serving size for a large variety of foods as calculated by the USDA in 2018. It is a cleaned version totaling 5956 observations and is current as of April 2018.
+
+The variables in the dataset are:
+
+- `ID` 
+- `Desc` - short description of food
+- `Water` - in grams
+- `Calories` - in kcal
+- `Protein` - in grams
+- `Fat` - in grams
+- `Carbs` - carbohydrates, in grams
+- `Fiber` - in grams
+- `Sugar` - in grams
+- `Calcium` - in milligrams
+- `Potassium` - in milligrams
+- `Sodium` - in milligrams
+- `VitaminC` - vitamin C, in milligrams
+- `Chol` - cholesterol, in milligrams
+- `Portion` - description of standard serving size used in analysis
+
+```{r message=FALSE, warning=FALSE}
+library(readr)
+nutrition = read_csv("nutrition-2018.csv")
+
+nutrition
+```
+
+**(a)** Create a histogram of `Calories`. Do not modify `R`'s default bin selection. Make the plot presentable. Describe the shape of the histogram. Do you notice anything unusual?
+
+```{r message=FALSE, warning=FALSE, fig.align='center'}
+ggplot(nutrition, aes(x=Calories)) +
+  geom_histogram(color = "blue", fill = "lightblue") +
+  labs(x = "Calories (kcal)")
+```
+
+The histogram above is right-scewed. This means that in the total range of the data, most of the foods will have lower calorie counts, with some outliers that will have higher calorie counts.
+
+**(b)** Create a scatter plot of calories (y-axis) vs protein (x-axis). Make the plot presentable. Do you notice any trends? Do you think that knowing only the protein content of a food, you could make a good prediction of the calories in the food?
+
+```{r message=FALSE, warning=FALSE, fig.align='center'}
+ggplot(nutrition, aes(x=Protein, y=Calories)) +
+  geom_point(color = "blue") +
+  labs(title = "Calories VS Protein",
+       x = "Protein (grams)", y = "Calories (kcal)")
+```
+
+There isn't necessarily a trend between the data, but it is easier to tell what the calories of a food would be based on the protein as the protein increases. The range of calories decreases as the protein increases.
+
+**(c)** Create a scatter plot of `Calories` (y-axis) vs `4 * Protein + 4 * Carbs + 9 * Fat` (x-axis). Make the plot presentable. You will either need to add a new variable to the data frame, or use the `I()` function in your formula in the call to `plot()`. If you are at all familiar with nutrition, you may realize that this formula calculates the calorie count based on the protein, carbohydrate, and fat values. You'd expect then that the result here is a straight line. Is it? If not, can you think of any reasons why it is not?
+
+```{r message=FALSE, warning=FALSE, fig.align='center'}
+ggplot(nutrition, aes(x=4*(Protein+4)*(Carbs+9)*Fat, y=Calories)) +
+  geom_point(color = "blue") +
+  labs(title = "Calories VS Calorie Count Formula",
+       x = "Calculated Calories", y = "Calories (kcal)")
+```
+
+The scatterplot above doesn't show a perfect straight line, but it does show that the formula can be used to get a good calorie estimate. There are a number of outliers that have a very high calorie count, but the formula predicts them to be lower. This discrepency could be caused by the lack of including other nutritional values in the formula. The increasing amount of sugar, for example, seems to be correlated with an increase in calories, as seen in the scatterplot below.
+
+```{r message=FALSE, warning=FALSE, fig.align='center'}
+ggplot(nutrition, aes(x=Sugar, y=Calories)) +
+  geom_point(color = "blue") +
+  labs(title = "Calories VS Sugar",
+       x = "Sugar (grams)", y = "Calories (kcal)")
+```
+
+***
+
+## Exercise 4 (Writing and Using Functions)
+
+For each of the following parts, use the following vectors:
+
+```{r}
+a = 1:10
+b = 10:1
+c = rep(1, times = 10)
+d = 2 ^ (1:10)
+```
+
+**(a)** Write a function called `sum_of_squares`.
+
+- Arguments:
+    - A vector of numeric data `x`
+- Output:
+    - The sum of the squares of the elements of the vector $\sum_{i = 1}^n x_i^2$
+    
+```{r message=FALSE, warning=FALSE}
+sum_of_squares = function(x){
+  sum(x^2)
+}
+```
+    
+Provide your function, as well as the result of running the following code:
+
+```{r}
+sum_of_squares(x = a)
+sum_of_squares(x = c(c, d))
+```
+
+**(b)** Using only your function `sum_of_squares()`, `mean()`, `sqrt()`, and basic math operations such as `+` and `-`, calculate
+
+\[
+\sqrt{\frac{1}{n}\sum_{i = 1}^n (x_i - 0)^{2}}
+\]
+
+where the $x$ vector is `d`.
+
+```{r message=FALSE, warning=FALSE}
+sqrt((1/length(d)) * sum_of_squares(d))
+```
+
+**(c)** Using only your function `sum_of_squares()`, `mean()`, `sqrt()`, and basic math operations such as `+` and `-`, calculate
+
+\[
+\sqrt{\frac{1}{n}\sum_{i = 1}^n (x_i - y_i)^{2}}
+\]
+
+where the $x$ vector is `a` and the $y$ vector is `b`.
+
+```{r message=FALSE, warning=FALSE}
+sqrt((1/length(a-b)) * sum_of_squares(a-b))
+```
+
+***
+
+## Exercise 5 (More Writing and Using Functions)
+
+For each of the following parts, use the following vectors:
+
+```{r}
+set.seed(42)
+x = 1:100
+y = rnorm(1000)
+z = runif(150, min = 0, max = 1)
+```
+
+**(a)** Write a function called `list_extreme_values`.
+
+- Arguments:
+    - A vector of numeric data `x`
+    - A positive constant, `k`, with a default value of `2`
+- Output:
+    - A list with two elements:
+        - `small`, a vector of elements of `x` that are $k$ sample standard deviations less than the sample mean. That is, the observations that are smaller than $\bar{x} - k \cdot s$.
+        - `large`, a vector of elements of `x` that are $k$ sample standard deviations greater than the sample mean. That is, the observations that are larger than $\bar{x} + k \cdot s$.
+        
+```{r message=FALSE, warning=FALSE}
+list_extreme_values = function(x, k=2){
+  x.mean = mean(x, na.rm = TRUE)
+  x.sd = sd(x, na.rm = TRUE)
+  
+  x.s = x[x < x.mean - (k * x.sd)]
+  x.l = x[x > x.mean - (k * x.sd)]
+  
+  list(small = x.s, large = x.l)
+}
+```
+
+Provide your function, as well as the result of running the following code:
+
+```{r}
+list_extreme_values(x = x, k = 1)
+list_extreme_values(x = y, k = 3)
+list_extreme_values(x = y, k = 2)
+list_extreme_values(x = z, k = 1.5)
+```
+
+**(b)** Using only your function `list_extreme_values()`, `mean()`, and basic list operations, calculate the mean of observations that are greater than 1.5 standard deviation above the mean in the vector `y`.
+
+```{r message=FALSE, warning=FALSE}
+ex.vals = list_extreme_values(y, 1.5)
+
+mean(ex.vals$large)
+```
