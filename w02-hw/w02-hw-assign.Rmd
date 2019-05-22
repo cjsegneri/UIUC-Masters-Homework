@@ -1,6 +1,6 @@
 ---
 title: "Week 2 - Homework"
-author: "STAT 420, Summer 2018, Unger"
+author: "STAT 420, Summer 2018, Connor Segneri - segneri3"
 date: ''
 output:
   html_document: 
@@ -9,10 +9,6 @@ output:
 urlcolor: cyan
 ---
 
-# Directions
-
-- Be sure to remove this section if you use this `.Rmd` file as a template.
-- You may leave the questions in your final document.
 
 ***
 
@@ -20,17 +16,59 @@ urlcolor: cyan
 
 For this exercise we will use the `cats` dataset from the `MASS` package. You should use `?cats` to learn about the background of this dataset.
 
+```{r message=FALSE, warning=FALSE}
+library(MASS)
+```
+
 **(a)** Suppose we would like to understand the size of a cat's heart based on the body weight of a cat. Fit a simple linear model in `R` that accomplishes this task. Store the results in a variable called `cat_model`. Output the result of calling `summary()` on `cat_model`.
+
+```{r message=FALSE, warning=FALSE}
+cat_model = lm(Hwt ~ Bwt, data=cats)
+summary(cat_model)
+```
 
 **(b)** Output only the estimated regression coefficients. Interpret $\hat{\beta_0}$ and $\beta_1$ in the *context of the problem*. Be aware that only one of those is an estimate.
 
+```{r message=FALSE, warning=FALSE}
+cat_model$coefficients
+```
+
+$\hat{\beta_0}$, **-0.3566624** is supposed to represent the heart weight (g) of a cat when the weight (kg) is zero. Obviously the height and weight of a cat must be greater than zero, so any predictions made can be disregarded until they are made within the estimated range of the cat's body weight: **```r range(cats$Bwt)```**.
+
+$\beta_1$, 4.0340627, represents the relationship between the cat's height and body weight. Based on the data, the linear model estimates that with 1 kg in body weight gained by a cat, the expected heart weight of the cat increases by 1 g.
+
 **(c)** Use your model to predict the heart weight of a cat that weights **2.7** kg. Do you feel confident in this prediction? Briefly explain.
+
+```{r message=FALSE, warning=FALSE}
+predict(cat_model, newdata=data.frame(Bwt = 2.7))
+```
+
+I feel confident about this prediction, as it was made within the range of the estimation data. The range of the estimation data, the body weight (kg) of the cat, is **```r range(cats$Bwt)```**.
 
 **(d)** Use your model to predict the heart weight of a cat that weights **4.4** kg. Do you feel confident in this prediction? Briefly explain.
 
+```{r message=FALSE, warning=FALSE}
+predict(cat_model, newdata=data.frame(Bwt = 4.4))
+```
+
+I do not feel as condfident in this prediction. The relationship between the independent and dependent variables can change outside of the estimation range, which we previously established to be **```r range(cats$Bwt)```** for a cat's body weight (kg).
+
 **(e)** Create a scatterplot of the data and add the fitted regression line. Make sure your plot is well labeled and is somewhat visually appealing.
 
+```{r message=FALSE, warning=FALSE}
+library(ggplot2)
+
+ggplot(data=cats, aes(x=Bwt,y=Hwt)) +
+  geom_point(color = 'red') +
+  labs(x = "Cat's Body Weight (kg)", y = "Cat's Heart Weight (g)") +
+  geom_smooth(method="lm", col="blue")
+```
+
 **(f)** Report the value of $R^2$ for the model. Do so directly. Do not simply copy and paste the value from the full output in the console after running `summary()` in part **(a)**.
+
+```{r warning=FALSE, message=FALSE}
+summary(cat_model)$r.squared
+```
 
 ***
 
@@ -49,11 +87,42 @@ The function should return a single value:
 - $s_e$ if `mle` is set to `FALSE`.
 - $\hat{\sigma}$ if `mle` is set to `TRUE`.
 
+```{r message=FALSE, warning=FALSE}
+get_sd_est = function(fitted_vals, actual_vals, mle=FALSE) {
+  if (mle){
+    sqrt((1/length(actual_vals)) * sum((actual_vals - fitted_vals)^2))
+  } else {
+    sqrt((1/(length(actual_vals)-2)) * sum((actual_vals - fitted_vals)^2))
+  }
+}
+```
+
 **(b)** Run the function `get_sd_est` on the residuals from the model in Exercise 1, with `mle` set to `FALSE`. Explain the resulting estimate in the context of the model.
+
+```{r message=FALSE, warning=FALSE}
+actual_values = cats$Hwt
+fitted_values = predict(cat_model, newdata = cats)
+
+get_sd_est(fitted_vals = fitted_values, actual_vals = actual_values)
+```
+
+This means that $s_e$, or the standard error of estimate is **1.452373**. This measures the variation in the actual values of the cat's heart weight to the computed values of the cat's heart weight using the linear model **cat_model**. The smaller the value is the better, if the standard error of estimate is zero, then the correlation is perfect.
 
 **(c)** Run the function `get_sd_est` on the residuals from the model in Exercise 1, with `mle` set to `TRUE`. Explain the resulting estimate in the context of the model. Note that we are trying to estimate the same parameter as in part **(b)**.
 
+```{r message=FALSE, warning=FALSE}
+get_sd_est(fitted_vals = fitted_values, actual_vals = actual_values, mle = TRUE)
+```
+
+The estimated standard deviation, or $\hat{\sigma}$, is **1.442252**. The difference between this value and the standard error of estimate is minor. However, standard error of estimation is considered unbiased, since $E[s_e]=\sigma^2$, and the estimated standard deviation is considered biased because $\hat{\sigma}\neq\sigma^2$.
+
 **(d)** To check your work, output `summary(cat_model)$sigma`. It should match at least one of **(b)** or **(c)**.
+
+```{r message=FALSE, warning=FALSE}
+summary(cat_model)$sigma
+```
+
+As expected, $E[s_e]=\sigma^2$.
 
 ***
 
