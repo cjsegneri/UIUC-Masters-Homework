@@ -3,8 +3,6 @@ title: "Week 2 - Homework"
 author: "STAT 420, Summer 2018, Connor Segneri - segneri3"
 date: ''
 output:
-  html_document: 
-    toc: yes
   pdf_document: default
 urlcolor: cyan
 ---
@@ -55,7 +53,7 @@ I do not feel as condfident in this prediction. The relationship between the ind
 
 **(e)** Create a scatterplot of the data and add the fitted regression line. Make sure your plot is well labeled and is somewhat visually appealing.
 
-```{r message=FALSE, warning=FALSE}
+```{r message=FALSE, warning=FALSE, fig.align='center'}
 library(ggplot2)
 
 ggplot(data=cats, aes(x=Bwt,y=Hwt)) +
@@ -145,7 +143,7 @@ where $\beta_0 = 5$ and $\beta_1 = -3$.
 This exercise relies heavily on generating random observations. To make this reproducible we will set a seed for the randomization. Alter the following code to make `birthday` store your birthday in the format: `yyyymmdd`. For example, [William Gosset](https://en.wikipedia.org/wiki/William_Sealy_Gosset), better known as *Student*, was born on June 13, 1876, so he would use:
 
 ```{r}
-birthday = 18760613
+birthday = 19951015
 set.seed(birthday)
 ```
 
@@ -157,9 +155,43 @@ x = runif(n = 25, 0, 10)
 
 You may use [the `sim_slr ` function provided in the text](http://daviddalpiaz.github.io/appliedstats/simple-linear-regression.html#simulating-slr). Store the data frame this function returns in a variable of your choice. Note that this function calls $y$ `response` and $x$ `predictor`.
 
+```{r message=FALSE, warning=FALSE}
+n_obs = 25
+beta_0 = 5
+beta_1 = -3
+sigma = sqrt(10.24)
+
+sim_slr = function(x, beta_0 = 10, beta_1 = 5, sigma = 1) {
+  n = length(x)
+  epsilon = rnorm(n, mean = 0, sd = sigma)
+  y = beta_0 + beta_1 * x + epsilon
+  data.frame(predictor = x, response = y)
+}
+
+xy_predicted_pairs = sim_slr(x, beta_0=beta_0, beta_1=beta_1, sigma=sigma)
+xy_predicted_pairs
+```
+
 **(b)** Fit a model to your simulated data. Report the estimated coefficients. Are they close to what you would expect? Briefly explain.
 
+```{r message=FALSE, warning=FALSE}
+model = lm(response ~ predictor, data=xy_predicted_pairs)
+
+summary(model)
+```
+
+This is about what I expected, the only strange thing is how far off the y-intercept is from the original model. Original was `5` and the model gives `6.9846` for the intercept. The slope is only `0.3` off.
+
 **(c)** Plot the data you simulated in part **(a)**. Add the regression line from part **(b)** as well as the line for the true model. Hint: Keep all plotting commands in the same chunk.
+
+```{r message=FALSE, warning=FALSE, fig.align='center'}
+plot(response ~ predictor, data=xy_predicted_pairs,
+     xlab = "Simulated Predictors",
+     ylab = "Response")
+abline(model, col="red")
+abline(beta_0, beta_1, col="blue")
+legend("topright", c("Estimate", "Truth"), col = c("red", "blue"), lty = c(1,2), lwd = 2)
+```
 
 **(d)** Use `R` to repeat the process of simulating `n = 25` observations from the above model $1500$ times. Each time fit a SLR model to the data and store the value of $\hat{\beta_1}$ in a variable called `beta_hat_1`. Some hints:
 
@@ -173,9 +205,31 @@ You may use [the `sim_slr ` function provided in the text](http://daviddalpiaz.g
 
 You can do this differently if you like. Use of these hints is not required.
 
+```{r message=FALSE, warning=FALSE}
+beta_hat_1 = c()
+for (i in 1:1500){
+  xy_predicted_pairs = sim_slr(x, beta_0=beta_0, beta_1=beta_1, sigma=sigma)
+  model = lm(response ~ predictor, data=xy_predicted_pairs)
+  beta_hat_1[i] = coef(model)[2]
+}
+```
+
 **(e)** Report the mean and standard deviation of `beta_hat_1`. Do either of these look familiar?
 
+```{r warning=FALSE, message=FALSE}
+mean(beta_hat_1)
+sd(beta_hat_1)
+```
+
+The mean of beta_hat_1 looks a lot like beta_1 for the original model, `-3`.
+
 **(f)** Plot a histogram of `beta_hat_1`. Comment on the shape of this histogram.
+
+```{r, message=FALSE, warning=FALSE, fig.align = 'center'}
+hist(beta_hat_1)
+```
+
+This histogram is bell-shaped. This indicates that the data is unimodal, meaning that the data has a single mode, identified by the 'peak' of the curve. The histogram looks this way because the data set is normally distributed.
 
 ***
 
@@ -198,7 +252,7 @@ where $\beta_0 = 3$ and $\beta_1 = 0$.
 Before answering the following parts, set a seed value equal to **your** birthday, as was done in the previous exercise.
 
 ```{r}
-birthday = 18760613
+birthday = 19951015
 set.seed(birthday)
 ```
 
@@ -208,17 +262,60 @@ set.seed(birthday)
 x = runif(n = 75, 0, 10)
 ```
 
-Each time fit a SLR model to the data and store the value of $\hat{\beta_1}$ in a variable called `beta_hat_1`. You may use [the `sim_slr ` function provided in the text](http://daviddalpiaz.github.io/appliedstats/simple-linear-regression.html#simulating-slr). Hint: Yes $\beta_1 = 0$.
+Each time fit a SLR model to the data and store the value of $\hat{\beta_1}$ in a variable called `beta_hat_1`. You may use [the `sim_slr ` function provided in the text](http://daviddalpiaz.github.io/appliedstats/simple-linear-regression.html#simulating-slr). Hint: Yes $\beta_1 = 0$
+
+```{r message=FALSE, warning=FALSE}
+n_obs = 75
+beta_0 = 3
+beta_1 = 0
+sigma = sqrt(4)
+
+beta_hat_1 = c()
+for (i in 1:2500){
+  xy_predicted_pairs = sim_slr(x, beta_0=beta_0, beta_1=beta_1, sigma=sigma)
+  model = lm(response ~ predictor, data=xy_predicted_pairs)
+  beta_hat_1[i] = coef(model)[2]
+}
+```
 
 **(b)** Plot a histogram of `beta_hat_1`. Comment on the shape of this histogram.
 
+```{r, message=FALSE, warning=FALSE, fig.align = 'center'}
+hist(beta_hat_1)
+```
+
+This histogram is left-skewed. The mean of the data is closer to the right than either the median of the mode.
+
 **(c)** Import the data in [`skeptic.csv`](skeptic.csv) and fit a SLR model. The variable names in `skeptic.csv` follow the same convention as those returned by `sim_slr()`. Extract the fitted coefficient for $\beta_1$.
+
+```{r message=FALSE, warning=FALSE}
+library(readr)
+skeptics = read_csv('skeptic.csv')
+
+skeptics_model = lm(response ~ predictor, data=skeptics)
+
+beta_1 = coef(skeptics_model)[2]
+beta_1
+```
 
 **(d)** Re-plot the histogram from **(b)**. Now add a vertical red line at the value of $\hat{\beta_1}$ in part **(c)**. To do so, you'll need to use `abline(v = c, col = "red")` where `c` is your value.
 
+```{r, message=FALSE, warning=FALSE, fig.align = 'center'}
+hist(beta_hat_1)
+abline(v=beta_1, col="red")
+```
+
 **(e)** Your value of $\hat{\beta_1}$ in **(c)** should be negative. What proportion of the `beta_hat_1` values is smaller than your $\hat{\beta_1}$? Return this proportion, as well as this proportion multiplied by `2`.
 
+```{r warning=FALSE, message=FALSE}
+prop_smaller = length(beta_hat_1[beta_hat_1 < beta_1]) / length(beta_hat_1)
+prop_smaller
+prop_smaller * 2
+```
+
 **(f)** Based on your histogram and part **(e)**, do you think the [`skeptic.csv`](skeptic.csv) data could have been generated by the model given above? Briefly explain.
+
+No I don't thnk the [`skeptic.csv`](skeptic.csv) data could have been generated by the model given above. The slope of `skeptics model`, $\hat{\beta_1}$, generated from the skeptics data is far from where the bulk of the generated beta_1 values are in `beta_hat_1`. Looking at the histogram tells us that much. An incredibly low proportion of of the `beta_hat_1` values are smaller than $\hat{\beta_1}$. If the skeptics data was generated by the original model, then I would expect the proportion calculated in **e** to be closer to `0.5`. It's still possible that the skeptics data was generated by the original model, but it is improbable.
 
 ***
 
@@ -252,7 +349,38 @@ For this exercise we will define the "Root Mean Square Error" of a model as
 
 **(a)** Fit three SLR models, each with "ozone" as the response. For the predictor, use "wind speed," "humidity percentage," and "temperature" respectively. For each, calculate $\text{RMSE}$ and $R^2$. Arrange the results in a markdown table, with a row for each model. Suggestion: Create a data frame that stores the results, then investigate the `kable()` function from the `knitr` package.
 
+```{r message=FALSE, warning=FALSE}
+library(kableExtra)
+
+wind_model = lm(ozone ~ wind, data=Ozone)
+humidity_model = lm(ozone ~ humidity, data=Ozone)
+temp_model = lm(ozone ~ temp, data=Ozone)
+
+find_rmse = function(actual, predicted){
+  sqrt((1/length(actual)) * sum((actual - predicted)^2))
+}
+
+df = data.frame(
+  name = c("Wind Model", "Humidity Model", "Temperature Model"),
+  rmse = c(
+    find_rmse(actual = Ozone$ozone, predicted = predict(wind_model, newdata = Ozone)),
+    find_rmse(actual = Ozone$ozone, predicted = predict(humidity_model, newdata = Ozone)),
+    find_rmse(actual = Ozone$ozone, predicted = predict(temp_model, newdata = Ozone))
+  ),
+  r_squared = c(
+    summary(wind_model)$r.squared,
+    summary(humidity_model)$r.squared,
+    summary(temp_model)$r.squared
+  )
+)
+
+kable(df) %>%
+  kable_styling()
+```
+
 **(b)** Based on the results, which of the three predictors used is most helpful for predicting ozone readings? Briefly explain.
+
+The predictor that is most helpful for predicting ozone readings is `temperature`. This predictor has the lowest rmse value, and an r_squared value closest to 1.
 
 ***
 
