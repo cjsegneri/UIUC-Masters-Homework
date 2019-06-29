@@ -1,0 +1,576 @@
+<?xml version='1.0' encoding='utf-8' ?>
+
+<!-- build 20192.19.0515.1630                               -->
+<workbook original-version='18.1' source-build='2019.2.0 (20192.19.0515.1630)' source-platform='win' version='18.1' xmlns:user='http://www.tableausoftware.com/xml/user'>
+  <document-format-change-manifest>
+    <SheetIdentifierTracking ignorable='true' predowngraded='true' />
+    <WindowsPersistSimpleIdentifiers />
+  </document-format-change-manifest>
+  <preferences>
+    <preference name='ui.encoding.shelf.height' value='24' />
+    <preference name='ui.shelf.height' value='26' />
+  </preferences>
+  <datasources>
+    <datasource caption='LMWPIDweb' inline='true' name='federated.0bcvc8u01bgiat1ehuveq0ba1xnw' version='18.1'>
+      <connection class='federated'>
+        <named-connections>
+          <named-connection caption='LMWPIDweb' name='textscan.10rmjpn1n48e6h12gis9y09h5mbx'>
+            <connection class='textscan' directory='C:/Code/UIUC-Masters-Homework/CS489-DataVisualization/Week1HW/Resources/LMWPIDweb' filename='LMWPIDweb.csv' password='' server='' />
+          </named-connection>
+        </named-connections>
+        <relation connection='textscan.10rmjpn1n48e6h12gis9y09h5mbx' name='LMWPIDweb.csv' table='[LMWPIDweb#csv]' type='table'>
+          <columns character-set='UTF-8' header='yes' locale='en_US' separator=','>
+            <column datatype='string' name='contcod' ordinal='0' />
+            <column datatype='string' name='country' ordinal='1' />
+            <column datatype='string' name='region' ordinal='2' />
+            <column datatype='integer' name='year' ordinal='3' />
+            <column datatype='string' name='inc_con' ordinal='4' />
+            <column datatype='string' name='source' ordinal='5' />
+            <column datatype='integer' name='mysample' ordinal='6' />
+            <column datatype='integer' name='bin_year' ordinal='7' />
+            <column datatype='integer' name='group' ordinal='8' />
+            <column datatype='real' name='pop' ordinal='9' />
+            <column datatype='integer' name='RRinc' ordinal='10' />
+            <column datatype='integer' name='RRmean' ordinal='11' />
+            <column datatype='real' name='cons_2005ppp_pc' ordinal='12' />
+            <column datatype='real' name='gdp_2005ppp_pc' ordinal='13' />
+            <column datatype='real' name='totpop' ordinal='14' />
+          </columns>
+        </relation>
+        <metadata-records>
+          <metadata-record class='capability'>
+            <remote-name />
+            <remote-type>0</remote-type>
+            <parent-name>[LMWPIDweb.csv]</parent-name>
+            <remote-alias />
+            <aggregation>Count</aggregation>
+            <contains-null>true</contains-null>
+            <attributes>
+              <attribute datatype='string' name='character-set'>&quot;UTF-8&quot;</attribute>
+              <attribute datatype='string' name='collation'>&quot;en_US&quot;</attribute>
+              <attribute datatype='string' name='field-delimiter'>&quot;,&quot;</attribute>
+              <attribute datatype='string' name='header-row'>&quot;true&quot;</attribute>
+              <attribute datatype='string' name='locale'>&quot;en_US&quot;</attribute>
+              <attribute datatype='string' name='single-char'>&quot;&quot;</attribute>
+            </attributes>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>contcod</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[contcod]</local-name>
+            <parent-name>[LMWPIDweb.csv]</parent-name>
+            <remote-alias>contcod</remote-alias>
+            <ordinal>0</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <scale>1</scale>
+            <width>1073741823</width>
+            <contains-null>true</contains-null>
+            <collation flag='0' name='LEN_RUS' />
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>country</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[country]</local-name>
+            <parent-name>[LMWPIDweb.csv]</parent-name>
+            <remote-alias>country</remote-alias>
+            <ordinal>1</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <scale>1</scale>
+            <width>1073741823</width>
+            <contains-null>true</contains-null>
+            <collation flag='0' name='LEN_RUS' />
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>region</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[region]</local-name>
+            <parent-name>[LMWPIDweb.csv]</parent-name>
+            <remote-alias>region</remote-alias>
+            <ordinal>2</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <scale>1</scale>
+            <width>1073741823</width>
+            <contains-null>true</contains-null>
+            <collation flag='0' name='LEN_RUS' />
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>year</remote-name>
+            <remote-type>20</remote-type>
+            <local-name>[year]</local-name>
+            <parent-name>[LMWPIDweb.csv]</parent-name>
+            <remote-alias>year</remote-alias>
+            <ordinal>3</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>inc_con</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[inc_con]</local-name>
+            <parent-name>[LMWPIDweb.csv]</parent-name>
+            <remote-alias>inc_con</remote-alias>
+            <ordinal>4</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <scale>1</scale>
+            <width>1073741823</width>
+            <contains-null>true</contains-null>
+            <collation flag='0' name='LEN_RUS' />
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>source</remote-name>
+            <remote-type>129</remote-type>
+            <local-name>[source]</local-name>
+            <parent-name>[LMWPIDweb.csv]</parent-name>
+            <remote-alias>source</remote-alias>
+            <ordinal>5</ordinal>
+            <local-type>string</local-type>
+            <aggregation>Count</aggregation>
+            <scale>1</scale>
+            <width>1073741823</width>
+            <contains-null>true</contains-null>
+            <collation flag='0' name='LEN_RUS' />
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>mysample</remote-name>
+            <remote-type>20</remote-type>
+            <local-name>[mysample]</local-name>
+            <parent-name>[LMWPIDweb.csv]</parent-name>
+            <remote-alias>mysample</remote-alias>
+            <ordinal>6</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>bin_year</remote-name>
+            <remote-type>20</remote-type>
+            <local-name>[bin_year]</local-name>
+            <parent-name>[LMWPIDweb.csv]</parent-name>
+            <remote-alias>bin_year</remote-alias>
+            <ordinal>7</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>group</remote-name>
+            <remote-type>20</remote-type>
+            <local-name>[group]</local-name>
+            <parent-name>[LMWPIDweb.csv]</parent-name>
+            <remote-alias>group</remote-alias>
+            <ordinal>8</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>pop</remote-name>
+            <remote-type>5</remote-type>
+            <local-name>[pop]</local-name>
+            <parent-name>[LMWPIDweb.csv]</parent-name>
+            <remote-alias>pop</remote-alias>
+            <ordinal>9</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>RRinc</remote-name>
+            <remote-type>20</remote-type>
+            <local-name>[RRinc]</local-name>
+            <parent-name>[LMWPIDweb.csv]</parent-name>
+            <remote-alias>RRinc</remote-alias>
+            <ordinal>10</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>RRmean</remote-name>
+            <remote-type>20</remote-type>
+            <local-name>[RRmean]</local-name>
+            <parent-name>[LMWPIDweb.csv]</parent-name>
+            <remote-alias>RRmean</remote-alias>
+            <ordinal>11</ordinal>
+            <local-type>integer</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>cons_2005ppp_pc</remote-name>
+            <remote-type>5</remote-type>
+            <local-name>[cons_2005ppp_pc]</local-name>
+            <parent-name>[LMWPIDweb.csv]</parent-name>
+            <remote-alias>cons_2005ppp_pc</remote-alias>
+            <ordinal>12</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>gdp_2005ppp_pc</remote-name>
+            <remote-type>5</remote-type>
+            <local-name>[gdp_2005ppp_pc]</local-name>
+            <parent-name>[LMWPIDweb.csv]</parent-name>
+            <remote-alias>gdp_2005ppp_pc</remote-alias>
+            <ordinal>13</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+          </metadata-record>
+          <metadata-record class='column'>
+            <remote-name>totpop</remote-name>
+            <remote-type>5</remote-type>
+            <local-name>[totpop]</local-name>
+            <parent-name>[LMWPIDweb.csv]</parent-name>
+            <remote-alias>totpop</remote-alias>
+            <ordinal>14</ordinal>
+            <local-type>real</local-type>
+            <aggregation>Sum</aggregation>
+            <contains-null>true</contains-null>
+          </metadata-record>
+        </metadata-records>
+      </connection>
+      <aliases enabled='yes' />
+      <column datatype='integer' name='[Number of Records]' role='measure' type='quantitative' user:auto-column='numrec'>
+        <calculation class='tableau' formula='1' />
+      </column>
+      <column caption='R Rinc' datatype='integer' name='[RRinc]' role='measure' type='quantitative' />
+      <column caption='R Rmean' datatype='integer' name='[RRmean]' role='measure' type='quantitative' />
+      <column caption='Bin Year' datatype='integer' name='[bin_year]' role='dimension' type='quantitative' />
+      <column caption='Cons 2005Ppp Pc' datatype='real' name='[cons_2005ppp_pc]' role='measure' type='quantitative' />
+      <column caption='Contcod' datatype='string' name='[contcod]' role='dimension' type='nominal' />
+      <column caption='Country' datatype='string' name='[country]' role='dimension' semantic-role='[Country].[ISO3166_2]' type='nominal' />
+      <column caption='Gdp 2005Ppp Pc' datatype='real' name='[gdp_2005ppp_pc]' role='measure' type='quantitative' />
+      <column caption='Group' datatype='integer' name='[group]' role='measure' type='quantitative' />
+      <column caption='Inc Con' datatype='string' name='[inc_con]' role='dimension' type='nominal' />
+      <column caption='Mysample' datatype='integer' name='[mysample]' role='measure' type='quantitative' />
+      <column caption='Pop' datatype='real' name='[pop]' role='measure' type='quantitative' />
+      <column caption='Region' datatype='string' name='[region]' role='dimension' type='nominal' />
+      <column caption='Source' datatype='string' name='[source]' role='dimension' type='nominal' />
+      <column caption='Totpop' datatype='real' name='[totpop]' role='measure' type='quantitative' />
+      <column caption='Year' datatype='integer' name='[year]' role='dimension' type='quantitative' />
+      <column-instance column='[group]' derivation='Avg' name='[avg:group:ok]' pivot='key' type='ordinal' />
+      <layout dim-ordering='alphabetic' dim-percentage='0.452206' measure-ordering='alphabetic' measure-percentage='0.547794' show-structure='true' />
+      <style>
+        <style-rule element='mark'>
+          <encoding attr='color' field='[avg:group:ok]' type='palette'>
+            <map to='#4e79a7'>
+              <bucket>825</bucket>
+            </map>
+            <map to='#59a14f'>
+              <bucket>5500</bucket>
+            </map>
+            <map to='#76b7b2'>
+              <bucket>3960</bucket>
+            </map>
+            <map to='#b07aa1'>
+              <bucket>9625</bucket>
+            </map>
+            <map to='#e15759'>
+              <bucket>3355</bucket>
+            </map>
+            <map to='#edc948'>
+              <bucket>6105</bucket>
+            </map>
+            <map to='#f28e2b'>
+              <bucket>1705</bucket>
+            </map>
+            <map to='#ff9da7'>
+              <bucket>5.5</bucket>
+            </map>
+          </encoding>
+        </style-rule>
+      </style>
+      <semantic-values>
+        <semantic-value key='[Country].[Name]' value='&quot;United States&quot;' />
+      </semantic-values>
+    </datasource>
+  </datasources>
+  <worksheets>
+    <worksheet name='Sheet 1'>
+      <table>
+        <view>
+          <datasources>
+            <datasource caption='LMWPIDweb' name='federated.0bcvc8u01bgiat1ehuveq0ba1xnw' />
+          </datasources>
+          <datasource-dependencies datasource='federated.0bcvc8u01bgiat1ehuveq0ba1xnw'>
+            <column caption='R Rinc' datatype='integer' name='[RRinc]' role='measure' type='quantitative' />
+            <column-instance column='[RRinc]' derivation='Avg' name='[avg:RRinc:qk]' pivot='key' type='quantitative' />
+            <column-instance column='[pop]' derivation='Avg' name='[avg:pop:qk]' pivot='key' type='quantitative' />
+            <column caption='Country' datatype='string' name='[country]' role='dimension' semantic-role='[Country].[ISO3166_2]' type='nominal' />
+            <column-instance column='[country]' derivation='None' name='[none:country:nk]' pivot='key' type='nominal' />
+            <column caption='Pop' datatype='real' name='[pop]' role='measure' type='quantitative' />
+          </datasource-dependencies>
+          <aggregation value='true' />
+        </view>
+        <style>
+          <style-rule element='axis'>
+            <encoding attr='space' class='0' field='[federated.0bcvc8u01bgiat1ehuveq0ba1xnw].[avg:pop:qk]' field-type='quantitative' scale='log' scope='cols' type='space' />
+          </style-rule>
+        </style>
+        <panes>
+          <pane id='2' selection-relaxation-option='selection-relaxation-allow'>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Automatic' />
+            <encodings>
+              <lod column='[federated.0bcvc8u01bgiat1ehuveq0ba1xnw].[none:country:nk]' />
+            </encodings>
+          </pane>
+        </panes>
+        <rows>[federated.0bcvc8u01bgiat1ehuveq0ba1xnw].[avg:RRinc:qk]</rows>
+        <cols>[federated.0bcvc8u01bgiat1ehuveq0ba1xnw].[avg:pop:qk]</cols>
+      </table>
+      <simple-id uuid='{461A40BB-685E-4C5D-8898-C280E4F41567}' />
+    </worksheet>
+    <worksheet name='Sheet 2'>
+      <table>
+        <view>
+          <datasources>
+            <datasource caption='LMWPIDweb' name='federated.0bcvc8u01bgiat1ehuveq0ba1xnw' />
+          </datasources>
+          <datasource-dependencies datasource='federated.0bcvc8u01bgiat1ehuveq0ba1xnw'>
+            <column-instance column='[cons_2005ppp_pc]' derivation='Avg' name='[avg:cons_2005ppp_pc:qk]' pivot='key' type='quantitative' />
+            <column-instance column='[pop]' derivation='Avg' name='[avg:pop:qk]' pivot='key' type='quantitative' />
+            <column caption='Cons 2005Ppp Pc' datatype='real' name='[cons_2005ppp_pc]' role='measure' type='quantitative' />
+            <column-instance column='[region]' derivation='None' name='[none:region:nk]' pivot='key' type='nominal' />
+            <column caption='Pop' datatype='real' name='[pop]' role='measure' type='quantitative' />
+            <column caption='Region' datatype='string' name='[region]' role='dimension' type='nominal' />
+          </datasource-dependencies>
+          <aggregation value='true' />
+        </view>
+        <style />
+        <panes>
+          <pane selection-relaxation-option='selection-relaxation-allow'>
+            <view>
+              <breakdown value='on' />
+            </view>
+            <mark class='Automatic' />
+            <encodings>
+              <color column='[federated.0bcvc8u01bgiat1ehuveq0ba1xnw].[avg:cons_2005ppp_pc:qk]' />
+              <size column='[federated.0bcvc8u01bgiat1ehuveq0ba1xnw].[avg:pop:qk]' />
+              <text column='[federated.0bcvc8u01bgiat1ehuveq0ba1xnw].[none:region:nk]' />
+            </encodings>
+            <style>
+              <style-rule element='mark'>
+                <format attr='mark-labels-show' value='true' />
+                <format attr='mark-labels-cull' value='true' />
+                <format attr='mark-labels-line-first' value='true' />
+                <format attr='mark-labels-line-last' value='true' />
+                <format attr='mark-labels-range-min' value='true' />
+                <format attr='mark-labels-range-max' value='true' />
+                <format attr='mark-labels-mode' value='all' />
+                <format attr='mark-labels-range-scope' value='pane' />
+                <format attr='mark-labels-range-field' value='' />
+              </style-rule>
+            </style>
+          </pane>
+        </panes>
+        <rows />
+        <cols />
+      </table>
+      <simple-id uuid='{1F485EC2-092F-4AEA-A28C-B6691CF719ED}' />
+    </worksheet>
+  </worksheets>
+  <windows saved-dpi-scale-factor='1.25' source-height='37'>
+    <window class='worksheet' maximized='true' name='Sheet 1'>
+      <cards>
+        <edge name='left'>
+          <strip size='160'>
+            <card type='pages' />
+            <card type='filters' />
+            <card type='marks' />
+          </strip>
+        </edge>
+        <edge name='top'>
+          <strip size='2147483647'>
+            <card type='columns' />
+          </strip>
+          <strip size='2147483647'>
+            <card type='rows' />
+          </strip>
+          <strip size='2147483647'>
+            <card type='title' />
+          </strip>
+        </edge>
+      </cards>
+      <viewpoint>
+        <highlight>
+          <color-one-way>
+            <field>[federated.0bcvc8u01bgiat1ehuveq0ba1xnw].[none:country:nk]</field>
+          </color-one-way>
+        </highlight>
+      </viewpoint>
+      <simple-id uuid='{7F5395FD-8986-429B-AE58-07AAB3BF132A}' />
+    </window>
+    <window class='worksheet' name='Sheet 2'>
+      <cards>
+        <edge name='left'>
+          <strip size='160'>
+            <card type='pages' />
+            <card type='filters' />
+            <card type='marks' />
+          </strip>
+        </edge>
+        <edge name='top'>
+          <strip size='2147483647'>
+            <card type='columns' />
+          </strip>
+          <strip size='2147483647'>
+            <card type='rows' />
+          </strip>
+          <strip size='2147483647'>
+            <card type='title' />
+          </strip>
+        </edge>
+        <edge name='right'>
+          <strip size='300'>
+            <card pane-specification-id='0' param='[federated.0bcvc8u01bgiat1ehuveq0ba1xnw].[avg:cons_2005ppp_pc:qk]' type='color' />
+          </strip>
+        </edge>
+      </cards>
+      <viewpoint>
+        <highlight>
+          <color-one-way>
+            <field>[federated.0bcvc8u01bgiat1ehuveq0ba1xnw].[avg:cons_2005ppp_pc:qk]</field>
+            <field>[federated.0bcvc8u01bgiat1ehuveq0ba1xnw].[avg:group:ok]</field>
+            <field>[federated.0bcvc8u01bgiat1ehuveq0ba1xnw].[avg:pop:qk]</field>
+            <field>[federated.0bcvc8u01bgiat1ehuveq0ba1xnw].[none:region:nk]</field>
+          </color-one-way>
+        </highlight>
+      </viewpoint>
+      <simple-id uuid='{10EEC278-90ED-404C-8DBB-236C18B58A9F}' />
+    </window>
+  </windows>
+  <thumbnails>
+    <thumbnail height='192' name='Sheet 1' width='192'>
+      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
+      H92n2fPbnRX0AAAAAElFTkSuQmCC
+    </thumbnail>
+    <thumbnail height='192' name='Sheet 2' width='192'>
+      iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAYAAABS3GwHAAAACXBIWXMAABJ0AAASdAHeZh94
+      AAADl0lEQVR4nO3ZzWtcZRjG4WfOHONkGtt8WFRoFlJBLQrdCUK3XfTvFkWkhVJR6keLkxZt
+      E20WE+NkMue4EhLNMsxQ7+vave/q2fwezssZ9H3fF4RqVj0ArJIAiNaePTw+fFHT+WxVs8DS
+      nQtgOp/V4cnxqmaBpfMJRLT23xd939ePj76r46Ojura9Vbs336/ZX7Nq27aG7bCa4bC6xaKa
+      pqlBox9eb/8JoKrqz+m0bn/+WT344qva+/lpbV3fqfHGRj1/+kvtvHO9nnz/Q13b3qo79+4u
+      e164VBeu8L7v6+GXX9d440p98MnH1S26apqmPrz9aXVdV6P1UTVD25/X3+Dsj7D7+xOPYKJY
+      40QTANEEQDQBEE0ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANEEQDQBEE0ARBMA0QRANAEQ
+      TQBEEwDRBEA0ARBNAEQTANEEQDQBEE0ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANEEQDQB
+      EE0ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANEEQDQBEE0ARBMA0QRANAEQTQBEEwDRBEA0
+      ARBNAEQTANEEQDQBEE0ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANEEQDQBEE0ARBMA0QRA
+      NAEQTQBEEwDRBEA0ARBNAEQTANEEQDQBEE0ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANEE
+      QDQBEE0ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANEEQDQBEE0ARBMA0QRANAEQTQBEEwDR
+      BEA0ARBNAEQTANEEQDQBEE0ARBMA0QRANAEQTQBEEwDRBEA0ARBNAERrzx5Gwzdq3C5WNQss
+      3bkATvtFzTsBkON8AF0nAKJ4AxCtvejy228e1M1bH9Wrg4N6b/dGTX56Uiezk9p8e7tO5/Pa
+      3Nmp9SvjZc8Kl+7CABanp/X44aNae3OtXuw9r3d3b9TRdFq/TZ7Vq4PfazAY1J17d5c9K1y6
+      CwMYjddrbTSqjatv1R8v9+vXyV5d3dqseQ2qaZoajW1//h8Gfd/3/xzu70/q8OR4lfPAUnkE
+      E00ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANEEQDQBEE0ARBMA0QRANAEQTQBEEwDRBEA0
+      ARBNAEQTANEEQDQBEE0ARBMA0QRANAEQTQBEEwDRBEA0ARBNAEQTANEEQDQBEE0ARBMA0QRA
+      NAEQ7W8v04NsL112GQAAAABJRU5ErkJggg==
+    </thumbnail>
+  </thumbnails>
+</workbook>
