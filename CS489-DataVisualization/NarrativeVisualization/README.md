@@ -1,7 +1,7 @@
 # Narrative Visualization
 
-## Author - Connor Segneri
-## Class - CS 498: Data Visualization
+### Author - Connor Segneri, segneri3
+### Class - CS 498: Data Visualization
 
 ---
 
