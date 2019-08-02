@@ -210,7 +210,12 @@ Using this information as a guideline, the following can be extracted (the stati
 * The $p$-value is $`r glance(add_mod)$p.value`$.
 * Statistical decision: **Reject** $H_0$ at $\alpha = 0.05$.
 * In conclusion, there is a linear relationship between `Salary` and at least one other predictor.
-* The `Other` predictor is not defined because of singularities, and this is likely due to collinearity issues. It can be safely dropped from the model, and this is further supported by the fact that the term "Other" can have many implications and would be difficult to generalize if it was a significant predictor. Additionally, removing it from the additive model does not affect the estimates. 
+* The `Other` predictor is not defined because of singularities, and this is likely due to collinearity issues. It can be safely dropped from the model, and this is further supported by the fact that the term "Other" can have many implications and would be difficult to generalize if it was a significant predictor. Additionally, removing it from the additive model does not affect the estimates.
+
+```{r message=FALSE, warning=FALSE}
+library(dplyr)
+data = select(data, -c("Other"))
+```
 
 Plugging in the derived coefficients, the model then becomes:
 
@@ -260,11 +265,94 @@ Based on these two plots of the model, two assumptions will be verified. These o
 
 im just gonna throw out some thoughts. u can get as creative as you want at this point. one idea i was thinking was using anova to compare the full additive model to a model that only uses age and years of experience as predictors. as you find out more and more in the analysis, you can safely throw out any variables that you know arent necessary. if theres any other variables you want to explore, feel free but you might have to carefully go through and make changes to whats already been done. i hope this is a good "handing off" point - and if u need me for anything, just text/call me. good luck!
 
+### Model Exploration
+
+Next, let's create a few more models. We'll compare them to one another and select the best model in the [Results](#results) section.
+
+The first step in determining which models to create is to take a look at the relationships between `Salary` and every other predictor. I'll do this using the `pairs` function.
+
+```{r message=FALSE, warning=FALSE, fig.align='center'}
+pairs(data)
+```
+
+The first model is an additive model that only uses `Age` and `Experience` as predictors.
+
+```{r message=FALSE, warning=FALSE}
+simple_add_mod = lm(Salary ~ Age + Experience, data = data)
+summary(simple_add_mod)
+```
+
+The next model contains every predictor, and every interaction between every predictor.
+
+```{r message=FALSE, warning=FALSE}
+inter_mod = lm(Salary ~ .^2, data = data)
+summary(inter_mod)
+```
+
+The last two models will use Backwards AIC (Akaike Information Criterion) to delete predictors from previous models in order to find a better fit. The first of these models will use the additive model that has every predictor. The second model will use the previously created model that has every interaction.
+
+```{r message=FALSE, warning=FALSE}
+add_mod_aic = step(add_mod, direction = "backward", trace = 0)
+summary(add_mod_aic)
+
+inter_mod_aic = step(inter_mod, direction = "backward", trace = 0)
+summary(inter_mod_aic)
+```
+
 ## Results
 
 TODO
 
 you can move some of the stuff ive done around into this section or the discussion section. in coursera it emphasizes talking about the final, chosen model in this section and the discussion section.
+
+### Model Comparison
+
+We'll use the anova test to compare models, and find the best fit. The anova test computes an analysis of variance (or deviance) tables for one or more fitted model objects.
+
+First I'll compare all of the additive models. The full additive model, the model that only uses `Age` and `Experience` as predictors, and the additive model that was discovered using backward aic on the full additive model.
+
+```{r message=FALSE, warning=FALSE}
+anova(add_mod, simple_add_mod, add_mod_aic)
+```
+
+Looking at the p-values, it seems like the additive model with the best fit is the one that was discovered using backward aic on the full additive model.
+
+Next we'll use the anova test to select the best interactive model. We fit two interactive models, one with every ineraction, and one where we used backward aic.
+
+```{r message=FALSE, warning=FALSE}
+anova(inter_mod, inter_mod_aic)
+```
+
+It looks like the interaction aic model is slightly better than the full interaction model.
+
+For the final test, I'll compare the interaction aic model with the additive aic to see which is the better fit.
+
+```{r message=FALSE, warning=FALSE}
+anova(add_mod_aic, inter_mod_aic)
+```
+
+The interactive aic model is the best model we've fit, and is the model we select.
+
+```{r message=FALSE, warning=FALSE}
+summary(inter_mod_aic)
+```
+
+### Assumptions
+
+We'll check for each model are the constant variance and normality assumptions. For the constant variance assumptions we'll use the Breusch-Pagan test, and for the normality assumption we'll use the Shapiro-Wilk test.
+
+```{r message=FALSE, warning=FALSE}
+library(lmtest)
+bptest(inter_mod_aic)
+```
+
+The null hypothesis for this test is that the error have constant variance about the true model. Looking at the p-value about, we reject the null hypothesis. The errors have a non-constant variance about the true model.
+
+```{r message=FALSE, warning=FALSE}
+shapiro.test(resid(inter_mod_aic))
+```
+
+The null hypothesis for this test assumes the data were sampled from a normal distribution. The small p-value above indicates that there is only a small probability the data could have been sampled from a normal distribution.
 
 ## Discussion
 
@@ -274,6 +362,10 @@ TODO
     - $Y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_3 x_3 + \beta_4 x_4 + \beta_5 x_5 + \beta_6 x_6 + \beta_7 x_7 + \beta_8 x_8 + \epsilon$
     - Based on the hypothesis test, we were able to conclude that there is at least one predictor in this model that forms a linear relationship with `Salary`.
     - This model also told us that the equal variance and normality assumptions have both been violated, leading us to believe that this model is not optimal for predicting `Salary`.
+    
+### R-Squared
+
+### Usability
 
 ## Appendix {#appendix}
 
