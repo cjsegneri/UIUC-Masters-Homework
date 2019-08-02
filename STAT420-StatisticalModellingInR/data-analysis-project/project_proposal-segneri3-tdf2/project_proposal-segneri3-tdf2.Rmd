@@ -1,0 +1,83 @@
+---
+title: "Data Analysis Project Proposal"
+author: "STAT 420, Summer 2019"
+date: 'July 17, 2019'
+output:
+  html_document: 
+    toc: true
+    toc_float: true
+    theme: cerulean
+    highlight: tango
+  pdf_document: default
+urlcolor: cyan
+---
+
+```{r setup, echo = FALSE, message = FALSE, warning = FALSE}
+options(scipen = 1, digits = 4, width = 80, fig.align = "center")
+```
+
+## Names + NetIDs
+
+* Connor Segneri - segneri3
+* Thomas (Tom) Fowler - tdf2
+
+## Tentative Title
+
+The tentative title for our project will be:
+
+> **Data Analysis of Data Science Professionals**
+
+## Dataset Description + Background Information
+
+The dataset that will be used is a multiple-choice survey developed by Kaggle as part of its second annual machine learning and data science survey challenge[$_{[1]}$](#references). This dataset contains a multitude of attributes that describe both macro groups (e.g., which survey participants prefer R over Python), as well as micro groups (e.g., technologies used by female students from Nigeria pursuing a PhD). To anyone with an interest in data science and machine learning, this dataset is truly a gold mine.
+
+The dataset contains hundreds of attributes based on individual survey questions, and over 20,000 unique survey participants. We will narrow the scope of our analysis down to participants who are data scientists, and some of the attributes we may use to build our model(s) include:
+
+* Age
+* Salary
+* Years of experience
+* Type of data he/she works with (e.g., image, time series, text, etc.)
+* Proportion of time spent working on industry DS practices, including:
+    * Gathering data
+    * Cleaning data
+    * Visualizing data
+    * Model building/model selection
+    * Putting model into production
+    * Finding and communicating data insights
+* Proportion of time spent learning data science
+    * Self-taught
+    * Online courses
+    * Work
+    * University
+    * Competitions
+    
+Other attributes may be considered as we make progress on the analysis. The *numeric response variable*, given the attributes that have been laid out, can (most feasibly) be either age, salary, or years of experience. The one we will choose is **salary**.
+
+## Why dataset was chosen
+
+Simply put: we're hitting two birds with one stone by analyzing this dataset. The first bird is applying what we've learned in this course to the project itself, and the second bird is having accurate insights of what data scientists are all about, proven by our model(s).
+
+## Loading dataset into R
+
+Since it isn't very feasible to show the first few rows of a several-hundred column dataset, only a few columns will be selected based on some of the attributes listed above.
+
+```{r}
+# Load data
+data = read.csv('multipleChoiceResponses.csv',header=T,na.strings=c(""," ","NA"))
+
+# Some cleaning
+data = data[,c(8,4,12,13,278:283)]
+data = data[data[,1] == "Data Scientist",]
+data = data[!grepl("I do not",data[,4]),]
+data = data[complete.cases(data),]
+colnames(data) = c("Position", "Age", "YearsOfExperience", "Salary", "GatherData", "CleanData","VisualizeData","ModelingData","ModelToProduction","AnalyzingData")
+rownames(data) = c()
+
+# Preview
+knitr::kable(head(data))
+dim(data)
+```
+
+## References {#references}
+
+[1)](https://www.kaggle.com/kaggle/kaggle-survey-2018/home) *Kaggle*. (2018, November 03). 2018 Kaggle ML & DS Survey Challenge. Retrieved July 16, 2019.  

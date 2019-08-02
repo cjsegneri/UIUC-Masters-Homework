@@ -1,0 +1,416 @@
+---
+title: "Data Analysis of Data Science Professionals"
+author: "STAT 420, Summer 2019, David Unger"
+date: 'July 29, 2019'
+subtitle: 'Authors: Connor Segneri (segneri3), Tom Fowler (tdf2)'
+output:
+  html_document: 
+    toc: true
+    toc_float: true
+    theme: cerulean
+    highlight: tango
+  pdf_document: default
+urlcolor: cyan
+---
+
+```{r setup, echo = FALSE, message = FALSE, warning = FALSE}
+options(scipen = 1, digits = 4, width = 80, fig.align = "center")
+```
+
+## Introduction
+
+The purpose of this project is to apply a thorough analysis of a dataset using many of the tools and techniques that have been taught throughout this course. More specifically, the end goal of this analysis is to develop a model that will be used for predicting the numeric response variable. The dataset that will be used is a multiple-choice survey developed by Kaggle as part of its second annual machine learning and data science survey challenge[$_{[1]}$](#references). This dataset contains a multitude of attributes that describe both macro groups (e.g., which survey participants prefer R over Python), as well as micro groups (e.g., technologies used by female students from Nigeria pursuing a PhD). To anyone with an interest in data science and machine learning, this dataset is truly a gold mine.
+
+The dataset contains hundreds of attributes based on individual survey questions, and over 20,000 unique survey participants. The scope of our analysis will be narrowed down to participants who are *data scientists who reside in the United States*, and some of the attributes that are included in the dataset include:
+
+* Age
+* Salary
+* Years of experience
+* Type of data he/she works with (e.g., image, time series, text, etc.)
+* Proportion of time spent working on industry DS practices, including:
+    * Gathering data
+    * Cleaning data
+    * Visualizing data
+    * Model building/model selection
+    * Putting model into production
+    * Finding and communicating data insights
+* Proportion of time spent learning data science
+    * Self-taught
+    * Online courses
+    * Work
+    * University
+    * Competitions
+    * Other
+    
+The *numeric response variable*, given the attributes that have been laid out, can (most feasibly) be either age, salary, or years of experience. The one that will be chosen is **salary**, as salary insights can be very useful in this increasingly popular field. Additionally, the set of *predictors* that will be used includes the following:
+
+* **Proportion of time spent learning data science**
+    * Self-taught
+    * Online courses
+    * Work
+    * University
+    * Competitions
+    * Other
+* **Age**
+* **Years of Experience**
+
+This set of predictors was chosen because not only are they interesting, but they may reveal some consistent results. Plus, it would be great to be able to make a definitive and specific conclusion along the lines of (for example) "A data scientist who is 70% self-taught, is between 45-50 years old, and has 20-25 years of experience has the largest salary". Using salary as the numeric response variable and these set of predictors, the analysis aims to answer the following question:
+
+> **What is the salary of a data scientist in the United States given the proportion of time invested in learning data science, his/her age, and years of experience?**
+
+This dataset was chosen because we are hitting two birds with one stone by analyzing this dataset. The first bird is applying what we have learned in this course to the project itself, and the second bird is having accurate insights of what data scientists are all about, proven by the model.
+
+## Methods
+
+This next section will describe and implement the analysis in detail. There may be some implementation details left out and referenced in the appendix section, as including them may clutter this section. 
+
+### Cleanup
+
+Since it is not very feasible to show the first few rows of a several-hundred column dataset, dimensionality reduction can be used to extract the attributes that are necessary for the analysis. By definition, dimensionality reduction is a set of statistical techniques that are used to reduce the number of random variables/attributes to consider in a dataset[$_{[2]}$](#references). Traditionally, there are many ways to go about implementing dimensionality reduction. Popular methods include Principal Component Analysis (PCA), Backward Feature Elimination, High Correlation Filtering, and Low Variance Filtering. All of these methods are best suited for working with high dimensional, numerical, normalized data. A good example of data that meets this criteria would be images, since they are essentially matrices with floating point values to represent each pixel. However, with all of that said, it is safe to say that the data that has been loaded in does not require a need for these traditional methods. This is indicated by the fact that the multiple choice answers (i.e., the columns), can be weighted using these methods, but for the sake of answering the hypothesis, only the necessary attributes are worth keeping. Furthermore, everyone's favorite dimensionality reduction technique can be used: brute-force attribute removal. The algorithm is simple: *subset the attributes from the rest of the dataset*. By effectively removing the unnecessary attributes, the dataset is one step closer to be used for effective model building. The implementation for this is included in the appendix[$_{[A]}$](#appendixA). The result is a dataframe that contains the response and predictors, and here is a preview of it:
+
+```{r,echo=F}
+# Load data
+data = read.csv('multipleChoiceResponses.csv',header=T,na.strings=c(""," ","NA"))
+
+# Some cleaning
+data = data[,c(8,5,13,285:290,4,12)]
+data = data[data[,1] == "Data Scientist",]
+data = data[data[,2] == "United States of America",]
+data = data[!grepl("I do not",data[,3]),]
+data = data[complete.cases(data),]
+colnames(data) = c("Position","Location","Salary","SelfTaught","Online","Work",
+                   "University","Competitions","Other","Age","Experience")
+rownames(data) = c()
+
+# Remove the position and location attributes, 
+# which were necessary for subsetting the data
+data = data[,-1]
+data = data[,-1]
+
+# Preview
+knitr::kable(head(data),caption="Response & predictors derived from dataset")
+```
+
+The next step involves factorizing any attributes that are labelled as ranges to become representative numeric values. These attributes include the response (*salary*), as well as the *age* and *years of experience* predictors. The fact that they were initially labelled in the dataset as ranges is in itself an indicator that each of these attributes are continuous. It makes sense too; for example, if individuals with higher salaries have more years of experience, the model should reflect this.
+
+This cleanup step is necessary because right now, the ranges in the data are treated as character strings, and the `R` interpreter does not know that a salary range of "60-70,000" is greater than "50-60,000". Due to the nature of this problem, the brute force approach would be to label each range with a numeric value. For simplicity and consistency, each value will be set to the minimum value of the range (e.g., `"50-60,000"` = `50,000`, `"1-2"` = `1`). Additionally, there was one observation that put a negative value for proportion of time spent on competitions, so this observation will be removed (to prevent providing inaccurate information). The code for this is included in the appendix[$_{[B]}$](#appendixB). The result is a dataframe that contains the response and predictors with the response variable factorized to numeric values, and here is a preview of it:
+
+```{r,echo=F}
+# Setup
+library(plyr)
+sal_data = as.character(data[,1])
+age_data = as.character(data[,8])
+exp_data = as.character(data[,9])
+
+# Factorize the salary values
+sal_data = revalue(sal_data,c("0-10,000" = 0,
+                               "10-20,000" = 10000,
+                               "20-30,000" = 20000,
+                               "30-40,000" = 30000,
+                               "40-50,000" = 40000,
+                               "50-60,000" = 50000,
+                               "60-70,000" = 60000,
+                               "70-80,000" = 70000,
+                               "80-90,000" = 80000,
+                               "90-100,000" = 90000,
+                               "100-125,000" = 100000,
+                               "125-150,000" = 125000,
+                               "150-200,000" = 150000,
+                               "200-250,000" = 200000,
+                               "250-300,000" = 250000,
+                               "300-400,000" = 300000,
+                               "400-500,000" = 400000))
+
+# Factorize the age values
+age_data = revalue(age_data,c("18-21" = 18,
+                               "22-24" = 22,
+                               "25-29" = 25,
+                               "30-34" = 30,
+                               "35-39" = 35,
+                               "40-44" = 40,
+                               "45-49" = 45,
+                               "50-54" = 50,
+                               "55-59" = 55,
+                               "60-69" = 60,
+                               "70-79" = 70,
+                               "80+" = 80))
+
+# Factorize the years of experience values
+exp_data = revalue(exp_data,c("0-1" = 0,
+                               "1-2" = 1,
+                               "2-3" = 2,
+                               "3-4" = 3,
+                               "4-5" = 4,
+                               "5-10" = 5,
+                               "10-15" = 10,
+                               "15-20" = 15,
+                               "20-25" = 20,
+                               "25-30" = 25,
+                               "30 +" = 30))
+
+# Replace data with factorized values
+data[,1] = as.numeric(sal_data)
+data[,8] = as.numeric(age_data)
+data[,9] = as.numeric(exp_data)
+
+# Convert rest of dataset to numeric
+data[,2] = as.numeric(as.character(data[,2]))
+data[,3] = as.numeric(as.character(data[,3]))
+data[,4] = as.numeric(as.character(data[,4]))
+data[,5] = as.numeric(as.character(data[,5]))
+data[,6] = as.numeric(as.character(data[,6]))
+data[,7] = as.numeric(as.character(data[,7]))
+data[,8] = as.numeric(as.character(data[,8]))
+data[,9] = as.numeric(as.character(data[,9]))
+
+# Remove the one person who thought it would be funny to
+# put a negative value in the proportion of competition time
+data = data[-57,]
+
+# Preview
+knitr::kable(head(data),caption="Response & predictors derived from dataset, ranges factorized")
+```
+
+Now that this dataset is completely cleaned up and ready to go, the analysis can officially begin. 
+
+### Multiple Linear Regression
+
+To get an understanding of how each predictor is related to the salary, the first method that will be used in the analysis is multiple linear regression. To start things off straightforward, the **additive multiple linear regression model** will be constructed first:
+
+\[
+Y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_3 x_3 + \beta_4 x_4 + \beta_5 x_5 + \beta_6 x_6 + \beta_7 x_7 + \beta_8 x_8 + \epsilon
+\]
+
+where
+
+- $Y$ is `Salary`
+- $x_1$ is `SelfTaught`
+- $x_2$ is `Online`
+- $x_3$ is `Work`
+- $x_4$ is `University`
+- $x_5$ is `Competitions`
+- $x_6$ is `Other`
+- $x_7$ is `Age`
+- $x_8$ is `Experience`
+
+```{r,echo=F}
+library(broom)
+```
+
+```{r}
+add_mod = lm(Salary ~ ., data = data)
+summary(add_mod)
+```
+
+Using this information as a guideline, the following can be extracted (the statistical tests will assume $\alpha = 0.05$):
+
+* Null hypothesis: $H_0 = \beta_1 = \beta_2 = \beta_3 = \beta_4 = \beta_5 = \beta_6 = \beta_7 = \beta_8 = 0$.
+* Alternative hypothesis: At least one of $\beta_j \ne 0$, $j = 1,2,3,4,5,6,7,8$.
+* The value of the $F$-test statistic is $`r summary(add_mod)$fstatistic[1]`$.
+* The $p$-value is $`r glance(add_mod)$p.value`$.
+* Statistical decision: **Reject** $H_0$ at $\alpha = 0.05$.
+* In conclusion, there is a linear relationship between `Salary` and at least one other predictor.
+* The `Other` predictor is not defined because of singularities, and this is likely due to collinearity issues. It can be safely dropped from the model, and this is further supported by the fact that the term "Other" can have many implications and would be difficult to generalize if it was a significant predictor. Additionally, removing it from the additive model does not affect the estimates. 
+
+Plugging in the derived coefficients, the model then becomes:
+
+\[
+Y = \beta_0 + (-87.0) x_1 + (-323.1) x_2 + (-2.6) x_3 + (-211.4) x_4 + 30.6 x_5 + 1240.2 x_7 + 2280.3 x_8 + \epsilon
+\]
+
+### Model Diagnostics
+
+Next, let's visualize this model and derive some more useful conclusions. A function from the homework will be used to generate these results, and is available in the appendix[$_{[C]}$](#appendixC).
+
+```{r,echo=F}
+diagnostics = function(model, pcol = 'grey', lcol = 'dodgerblue', alpha = 0.05, plotit = T, testit = T)
+{
+  if(plotit == T)
+  {
+    par(mfrow=c(1,2))
+    
+    # Fitted vs. Residuals
+    plot(fitted(model), resid(model), col = pcol, pch = 20,
+      xlab = "Fitted", ylab = "Residuals", main = "Fitted vs. Residuals Plot")
+    abline(h = 0, col = lcol, lwd = 2)
+    
+    # Q-Q Plot
+    qqnorm(resid(model), main = "Normal Q-Q Plot", col = pcol)
+    qqline(resid(model), col = lcol, lwd = 2)
+  }
+  if(testit == T)
+  {
+    p_val = shapiro.test(resid(model))$p.value
+    decision = ifelse(p_val <= alpha,"Reject","Fail to Reject")
+    return(list('p_val' = p_val, 'decision' = decision))
+  }
+}
+```
+
+```{r}
+diagnostics(add_mod,testit=F)
+```
+
+Based on these two plots of the model, two assumptions will be verified. These outcomes of these two assumptions will help further verify whether or not this is a good model. 
+
+* Based on the fitted vs. residuals plot, the **constant variance assumption** is violated. This is because the spread of residuals changes rather drastically at certain parts of the fitted model.
+* Based on the normal Q-Q plot, the **normality assumption** is also violated. This is indicated by the "fat-tails" where the points diverge from the line for the lower and upper theoretical quantiles. We would probably not believe the errors follow a normal distribution. 
+
+### To be continued...
+
+im just gonna throw out some thoughts. u can get as creative as you want at this point. one idea i was thinking was using anova to compare the full additive model to a model that only uses age and years of experience as predictors. as you find out more and more in the analysis, you can safely throw out any variables that you know arent necessary. if theres any other variables you want to explore, feel free but you might have to carefully go through and make changes to whats already been done. i hope this is a good "handing off" point - and if u need me for anything, just text/call me. good luck!
+
+## Results
+
+TODO
+
+you can move some of the stuff ive done around into this section or the discussion section. in coursera it emphasizes talking about the final, chosen model in this section and the discussion section.
+
+## Discussion
+
+TODO
+
+* Full Additive Model
+    - $Y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_3 x_3 + \beta_4 x_4 + \beta_5 x_5 + \beta_6 x_6 + \beta_7 x_7 + \beta_8 x_8 + \epsilon$
+    - Based on the hypothesis test, we were able to conclude that there is at least one predictor in this model that forms a linear relationship with `Salary`.
+    - This model also told us that the equal variance and normality assumptions have both been violated, leading us to believe that this model is not optimal for predicting `Salary`.
+
+## Appendix {#appendix}
+
+This section is used to contain blocks of code that are not necessary to include directly in the report, but were used in the analysis. 
+
+### Appendix A {#appendixA}
+
+```{r,eval=F}
+# Load data
+data = read.csv('multipleChoiceResponses.csv',header=T,na.strings=c(""," ","NA"))
+
+# Some cleaning
+data = data[,c(8,5,13,285:290,4,12)]
+data = data[data[,1] == "Data Scientist",]
+data = data[data[,2] == "United States of America",]
+data = data[!grepl("I do not",data[,3]),]
+data = data[complete.cases(data),]
+colnames(data) = c("Position","Location","Salary","SelfTaught","Online","Work",
+                   "University","Competitions","Other","Age","Experience")
+rownames(data) = c()
+
+# Remove the position and location attributes, 
+# which were necessary for subsetting the data
+data = data[,-1]
+data = data[,-1]
+
+# Preview
+knitr::kable(head(data),caption="Response & predictors derived from dataset")
+dim(data)
+```
+
+### Appendix B {#appendixB}
+
+```{r,eval=F}
+# Setup
+library(plyr)
+sal_data = as.character(data[,1])
+age_data = as.character(data[,8])
+exp_data = as.character(data[,9])
+
+# Factorize the salary values
+sal_data = revalue(sal_data,c("0-10,000" = 0,
+                               "10-20,000" = 10000,
+                               "20-30,000" = 20000,
+                               "30-40,000" = 30000,
+                               "40-50,000" = 40000,
+                               "50-60,000" = 50000,
+                               "60-70,000" = 60000,
+                               "70-80,000" = 70000,
+                               "80-90,000" = 80000,
+                               "90-100,000" = 90000,
+                               "100-125,000" = 100000,
+                               "125-150,000" = 125000,
+                               "150-200,000" = 150000,
+                               "200-250,000" = 200000,
+                               "250-300,000" = 250000,
+                               "300-400,000" = 300000,
+                               "400-500,000" = 400000))
+
+# Factorize the age values
+age_data = revalue(age_data,c("18-21" = 18,
+                               "22-24" = 22,
+                               "25-29" = 25,
+                               "30-34" = 30,
+                               "35-39" = 35,
+                               "40-44" = 40,
+                               "45-49" = 45,
+                               "50-54" = 50,
+                               "55-59" = 55,
+                               "60-69" = 60,
+                               "70-79" = 70,
+                               "80+" = 80))
+
+# Factorize the years of experience values
+exp_data = revalue(exp_data,c("0-1" = 0,
+                               "1-2" = 1,
+                               "2-3" = 2,
+                               "3-4" = 3,
+                               "4-5" = 4,
+                               "5-10" = 5,
+                               "10-15" = 10,
+                               "15-20" = 15,
+                               "20-25" = 20,
+                               "25-30" = 25,
+                               "30 +" = 30))
+
+# Replace data with factorized values
+data[,1] = as.numeric(sal_data)
+data[,8] = as.numeric(age_data)
+data[,9] = as.numeric(exp_data)
+
+# Convert rest of dataset to numeric
+data[,2] = as.numeric(as.character(data[,2]))
+data[,3] = as.numeric(as.character(data[,3]))
+data[,4] = as.numeric(as.character(data[,4]))
+data[,5] = as.numeric(as.character(data[,5]))
+data[,6] = as.numeric(as.character(data[,6]))
+data[,7] = as.numeric(as.character(data[,7]))
+data[,8] = as.numeric(as.character(data[,8]))
+data[,9] = as.numeric(as.character(data[,9]))
+
+# Remove the one person who thought it would be funny to
+# put a negative value in the proportion of competition time
+data = data[-57,]
+
+# Preview
+knitr::kable(head(data),caption="Response & predictors derived from dataset, ranges factorized")
+```
+
+### Appendix C {#appendixC}
+
+```{r,eval=F}
+diagnostics = function(model, pcol = 'grey', lcol = 'dodgerblue', alpha = 0.05, plotit = T, testit = T)
+{
+  if(plotit == T)
+  {
+    par(mfrow=c(1,2))
+    
+    # Fitted vs. Residuals
+    plot(fitted(model), resid(model), col = pcol, pch = 20,
+      xlab = "Fitted", ylab = "Residuals", main = "Fitted vs. Residuals Plot")
+    abline(h = 0, col = lcol, lwd = 2)
+    
+    # Q-Q Plot
+    qqnorm(resid(model), main = "Normal Q-Q Plot", col = pcol)
+    qqline(resid(model), col = lcol, lwd = 2)
+  }
+  if(testit == T)
+  {
+    p_val = shapiro.test(resid(model))$p.value
+    decision = ifelse(p_val <= alpha,"Reject","Fail to Reject")
+    return(list('p_val' = p_val, 'decision' = decision))
+  }
+}
+```
+
+## References {#references}
+
+[1)](https://www.kaggle.com/kaggle/kaggle-survey-2018/home) *Kaggle*. (2018, November 03). 2018 Kaggle ML & DS Survey Challenge. Retrieved July 16, 2019.  
+[2)](https://www.techopedia.com/definition/30392/dimensionality-reduction) *What is Dimensionality Reduction? - Definition from Techopedia*. (n.d.). Retrieved July 16, 2019.  
