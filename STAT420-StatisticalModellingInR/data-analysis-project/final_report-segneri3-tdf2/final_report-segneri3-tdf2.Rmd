@@ -261,10 +261,6 @@ Based on these two plots of the model, two assumptions will be verified. These o
 * Based on the fitted vs. residuals plot, the **constant variance assumption** is violated. This is because the spread of residuals changes rather drastically at certain parts of the fitted model.
 * Based on the normal Q-Q plot, the **normality assumption** is also violated. This is indicated by the "fat-tails" where the points diverge from the line for the lower and upper theoretical quantiles. We would probably not believe the errors follow a normal distribution. 
 
-### To be continued...
-
-im just gonna throw out some thoughts. u can get as creative as you want at this point. one idea i was thinking was using anova to compare the full additive model to a model that only uses age and years of experience as predictors. as you find out more and more in the analysis, you can safely throw out any variables that you know arent necessary. if theres any other variables you want to explore, feel free but you might have to carefully go through and make changes to whats already been done. i hope this is a good "handing off" point - and if u need me for anything, just text/call me. good luck!
-
 ### Model Exploration
 
 Next, let's create a few more models. We'll compare them to one another and select the best model in the [Results](#results) section.
@@ -301,10 +297,6 @@ summary(inter_mod_aic)
 
 ## Results
 
-TODO
-
-you can move some of the stuff ive done around into this section or the discussion section. in coursera it emphasizes talking about the final, chosen model in this section and the discussion section.
-
 ### Model Comparison
 
 We'll use the anova test to compare models, and find the best fit. The anova test computes an analysis of variance (or deviance) tables for one or more fitted model objects.
@@ -317,7 +309,7 @@ anova(add_mod, simple_add_mod, add_mod_aic)
 
 Looking at the p-values, it seems like the additive model with the best fit is the one that was discovered using backward aic on the full additive model.
 
-Next we'll use the anova test to select the best interactive model. We fit two interactive models, one with every ineraction, and one where we used backward aic.
+Next we'll use the anova test to select the best interactive model. We fit two interactive models, one with every interaction, and one where we used backward aic.
 
 ```{r message=FALSE, warning=FALSE}
 anova(inter_mod, inter_mod_aic)
@@ -363,9 +355,25 @@ TODO
     - Based on the hypothesis test, we were able to conclude that there is at least one predictor in this model that forms a linear relationship with `Salary`.
     - This model also told us that the equal variance and normality assumptions have both been violated, leading us to believe that this model is not optimal for predicting `Salary`.
     
+### Assumptions
+
+As shown in the Results section, the normality assumption and the constant variance assumptions were not met for the best model we could come up with. Since the assumptions have not been met, this means that we can still "perform" a t-test using `R`, but the results are not valid. The distributions of the parameter estimates will not be what we expect. Hypothesis tests will then accept or reject incorrectly.
+
+### Testing the Model
+
+```{r message=FALSE, warning=FALSE}
+summary(inter_mod_aic)$coefficients
+```
+
+Based on the hypothesis test, it looks as though the predictors in the chosen model from a linear relationship with `Salary`. Based on the previous section however, we know we cannot trust any conclusions drawn based on hypothesis tests when the assumptions of linear regression are not met for a given model. So while these predictors seem to be significant in predicting `Salary`, we should not draw any real conclusions.
+
 ### R-Squared
 
-### Usability
+The R-Squared value for a model is a statistical measure of how close the data are to the fitted regression line. It is the percentage of the response variable variation that is explained by a linear model. The R-Squared for our chosen model is ``r summary(inter_mod_aic)$r.squared``. This indicates that the model explains about `24%` of the variability of the response data around its mean. While this is the best R-Squared value of the models we created, (except for the full interactive model which was ``r summary(inter_mod)$r.squared``) it is not a very good R-Squared value. We would say that this model doesn't do a very good job at explaining the response variable variation.
+
+### Conclusion
+
+Although the interactive model discovered by utilizing backward aic is more useful in predicting a data scientist's salary than the other models we created, we can't confidently say it is useful on it's own. Breaking the assumptions of linear regression combined with its low R-Squared value indicate that we haven't found predictors that can meaningfully predict a data scientist's salary (at least with the data we've been using in this report).
 
 ## Appendix {#appendix}
 
