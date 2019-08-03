@@ -265,7 +265,7 @@ Based on these two plots of the model, two assumptions will be verified. These o
 
 Next, let's create a few more models. We'll compare them to one another and select the best model in the [Results](#results) section.
 
-The first step in determining which models to create is to take a look at the relationships between `Salary` and every other predictor. I'll do this using the `pairs` function.
+The first step in determining which models to create is to take a look at the relationships between `Salary` and every other predictor. We'll do this using the `pairs` function.
 
 ```{r message=FALSE, warning=FALSE, fig.align='center'}
 pairs(data)
@@ -275,24 +275,24 @@ The first model is an additive model that only uses `Age` and `Experience` as pr
 
 ```{r message=FALSE, warning=FALSE}
 simple_add_mod = lm(Salary ~ Age + Experience, data = data)
-summary(simple_add_mod)
+summary(simple_add_mod)$coefficients
 ```
 
 The next model contains every predictor, and every interaction between every predictor.
 
 ```{r message=FALSE, warning=FALSE}
 inter_mod = lm(Salary ~ .^2, data = data)
-summary(inter_mod)
+summary(inter_mod)$coefficients
 ```
 
-The last two models will use Backwards AIC (Akaike Information Criterion) to delete predictors from previous models in order to find a better fit. The first of these models will use the additive model that has every predictor. The second model will use the previously created model that has every interaction.
+The last two models will use Backwards AIC (Akaike Information Criterion) to remove predictors from previous models in order to find a better fit. The first of these models will use the additive model that has every predictor. The second model will use the previously created model that has every interaction.
 
 ```{r message=FALSE, warning=FALSE}
 add_mod_aic = step(add_mod, direction = "backward", trace = 0)
-summary(add_mod_aic)
+summary(add_mod_aic)$coefficients
 
 inter_mod_aic = step(inter_mod, direction = "backward", trace = 0)
-summary(inter_mod_aic)
+summary(inter_mod_aic)$coefficients
 ```
 
 ## Results
@@ -301,7 +301,7 @@ summary(inter_mod_aic)
 
 We'll use the anova test to compare models, and find the best fit. The anova test computes an analysis of variance (or deviance) tables for one or more fitted model objects.
 
-First I'll compare all of the additive models. The full additive model, the model that only uses `Age` and `Experience` as predictors, and the additive model that was discovered using backward aic on the full additive model.
+First I'll compare all of the additive models. These are the full additive model, the model that only uses `Age` and `Experience` as predictors, and the additive model that was discovered using backward aic on the full additive model.
 
 ```{r message=FALSE, warning=FALSE}
 anova(add_mod, simple_add_mod, add_mod_aic)
@@ -331,14 +331,14 @@ summary(inter_mod_aic)
 
 ### Assumptions
 
-We'll check for each model are the constant variance and normality assumptions. For the constant variance assumptions we'll use the Breusch-Pagan test, and for the normality assumption we'll use the Shapiro-Wilk test.
+Now we'll check if the model selected follows the constant variance and normality assumptions. For the constant variance assumptions we'll use the Breusch-Pagan test, and for the normality assumption we'll use the Shapiro-Wilk test.
 
 ```{r message=FALSE, warning=FALSE}
 library(lmtest)
 bptest(inter_mod_aic)
 ```
 
-The null hypothesis for this test is that the error have constant variance about the true model. Looking at the p-value about, we reject the null hypothesis. The errors have a non-constant variance about the true model.
+The null hypothesis for this test is that the errors have constant variance about the true model. Looking at the p-value, we reject the null hypothesis. The errors have a non-constant variance about the true model.
 
 ```{r message=FALSE, warning=FALSE}
 shapiro.test(resid(inter_mod_aic))
@@ -347,17 +347,10 @@ shapiro.test(resid(inter_mod_aic))
 The null hypothesis for this test assumes the data were sampled from a normal distribution. The small p-value above indicates that there is only a small probability the data could have been sampled from a normal distribution.
 
 ## Discussion
-
-TODO
-
-* Full Additive Model
-    - $Y = \beta_0 + \beta_1 x_1 + \beta_2 x_2 + \beta_3 x_3 + \beta_4 x_4 + \beta_5 x_5 + \beta_6 x_6 + \beta_7 x_7 + \beta_8 x_8 + \epsilon$
-    - Based on the hypothesis test, we were able to conclude that there is at least one predictor in this model that forms a linear relationship with `Salary`.
-    - This model also told us that the equal variance and normality assumptions have both been violated, leading us to believe that this model is not optimal for predicting `Salary`.
     
 ### Assumptions
 
-As shown in the Results section, the normality assumption and the constant variance assumptions were not met for the best model we could come up with. Since the assumptions have not been met, this means that we can still "perform" a t-test using `R`, but the results are not valid. The distributions of the parameter estimates will not be what we expect. Hypothesis tests will then accept or reject incorrectly.
+As shown in the [Results](#results) section, the normality assumption and the constant variance assumptions were not met for the best model we could come up with. Since the assumptions have not been met, this means that we can still "perform" a t-test using `R`, but the results are not valid. The distributions of the parameter estimates will not be what we expect. Hypothesis tests will then accept or reject incorrectly.
 
 ### Testing the Model
 
@@ -367,13 +360,21 @@ summary(inter_mod_aic)$coefficients
 
 Based on the hypothesis test, it looks as though the predictors in the chosen model from a linear relationship with `Salary`. Based on the previous section however, we know we cannot trust any conclusions drawn based on hypothesis tests when the assumptions of linear regression are not met for a given model. So while these predictors seem to be significant in predicting `Salary`, we should not draw any real conclusions.
 
+That being said, looking at the model, it seems as though the predictors we would expect have the highest correlation in determining what a data scientist's salary would be.
+
+```{r message=FALSE, warning=FALSE}
+summary(inter_mod_aic)
+```
+
+Looking at the p-values for the individual t-tests performed for each predictor used above, we see that `Experience` and `Age` are the two predictors that the model suggests have the most influence on a data scientist's salary, with the relationship between `Age` and `Experience` having more influence than `Age` by itself.
+
 ### R-Squared
 
 The R-Squared value for a model is a statistical measure of how close the data are to the fitted regression line. It is the percentage of the response variable variation that is explained by a linear model. The R-Squared for our chosen model is ``r summary(inter_mod_aic)$r.squared``. This indicates that the model explains about `24%` of the variability of the response data around its mean. While this is the best R-Squared value of the models we created, (except for the full interactive model which was ``r summary(inter_mod)$r.squared``) it is not a very good R-Squared value. We would say that this model doesn't do a very good job at explaining the response variable variation.
 
 ### Conclusion
 
-Although the interactive model discovered by utilizing backward aic is more useful in predicting a data scientist's salary than the other models we created, we can't confidently say it is useful on it's own. Breaking the assumptions of linear regression combined with its low R-Squared value indicate that we haven't found predictors that can meaningfully predict a data scientist's salary (at least with the data we've been using in this report).
+Although the interactive model discovered by utilizing backward aic is more useful in predicting a data scientist's salary than the other models we created, we can't confidently say it is useful on it's own. Breaking the assumptions of linear regression combined with its low R-Squared value indicate that we haven't found predictors that can meaningfully predict a data scientist's salary (at least with the data we've been using in this report). It was interesting to see how significant the relationship between `Experience` and `Age` were in predicting a data scientist's salary in the model that we selected, but we can't draw any real conclusions as of now.
 
 ## Appendix {#appendix}
 
