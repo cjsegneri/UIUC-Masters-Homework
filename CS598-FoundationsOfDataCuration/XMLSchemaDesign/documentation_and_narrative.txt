@@ -1,0 +1,86 @@
+---- Prose Documentation ----
+
+Entities
+- api_documentation - This element describes the document as a whole, a
+document that describes how to use aws api gateway, aws lambda, aws athena,
+and aws s3 to create an api to query data.
+- title - The title of the document.
+- general_documentation - General documentation about how the apis we develop
+work.
+- example_documentation - Documentation for each individual api that we have.
+- pricing - The pricing information for the aws services used.
+- architecture - the architectural design for creating apis using aws services.
+- tutorial - aws documented tutorials used to create apis using its services.
+- header - A header that distinguishes a new section of the Documentation.
+- url - The api url.
+- request_parameters - Parameters that can be sent in the api request.
+- response_syntax - The response syntax from the api request.
+- validation - A section of the documentation where validation is shown that
+the api is functional.
+- description - A piece of text that describes a piece of the documentation.
+- image - An image.
+- url_text - The actual url text for the api url.
+
+Attributes
+- example_documentation id - A unique id for each section of documentation
+that deals with a different api. I've required it so I have a consistent and
+unique reference to each individual id.
+- title fontsize - The font size for the title.
+- header fontsize - The font size for the header.
+- header isbold - If the header is bold or not.
+- image src - The path to the image file. It's required because the image
+file needs to exist for there to be an image element.
+
+
+---- Narrative with Reflection Questions ----
+
+How did you decide to represent the data in the way that you did? Why did you
+choose the elements and attributes that you did?
+- I decided to represent the data in the way that I did because I wanted to
+maintain the integrity of the source document. I knew that I could logically
+split the document into nested chunks. Each chunk a different descriptor of
+either the general api methodology for our Data Platform project, or a piece
+of one of the specific examples of api usage, of which there is currently
+one.
+
+What were the hardest decisions you had to make in this design process?
+- I didn't have that many difficult design choices. The hardest of which
+was probably how to handle the header info at the beginning of each section.
+I started by creating a unique header (ex. tutorial_header) for each section
+of the document, but then I realized that was silly, and a single header
+element shared across most sections would do the job just fine.
+
+How does your DTD design support data independence?
+- By keeping my naming conventions vague, I can change the content of my
+elements to whatever I want, but any user applications that are relying
+on element names to get to the information they need to get to will continue
+to work, as I can't see very many reasons to change those at all.
+
+How may your DTD design support the overarching goals of data curation
+(revisit objectives and activities of Week 1)?
+- Organization
+The xml schema I've designed allows my team to set appropriate organizational
+standards when it comes to writing documentation about our api development.
+My team members won't all have their own data model for writing this type
+of documentation.
+- Identification
+Different elements of the documentation are easily identified and accessible
+now that their are elements/attributes assigned to describe them. This is true
+for people, but especially true for computers. Any application that needs
+access to some information in our api documentation doesn't have to parse plain
+text to find it, but has detailed descriptors to help it identify document
+elements.
+- Sharing
+Sharing our documentation with other teams is easier if we use the DTD I've
+created. The elements/attributes for the documentation answer a lot of questions
+that other teams might have, and reduce any variation in documentation that other
+teams might make if they decide to add to what we have.
+- Compliance
+If there are any legal requirements that must be met, we can make sure anyone
+who writes documentation follows any requirements we set in the DTD. This way,
+the document will only validate if certain elements and attributes adhere to
+the DOCTYPE. For example, if it was required that we document the number
+of times a certain api is used each day, we can add that as an element in
+the document, and have another application use that element's unique id
+to update the value at the end of each day, so that it's always up to date
+and accessible.

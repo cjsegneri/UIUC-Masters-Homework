@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE api_documentation [
+<!ELEMENT api_documentation (title, general_documentation, example_documentation*)>
+<!ELEMENT title (#PCDATA)>
+<!ELEMENT general_documentation (pricing, architecture, tutorial)>
+<!ELEMENT pricing (header, description+)>
+<!ELEMENT architecture (header, image)>
+<!ELEMENT tutorial (header, description+)>
+<!ELEMENT example_documentation (header, description, url, request_parameters, response_syntax, validation)>
+<!ELEMENT url (header, url_text)>
+<!ELEMENT request_parameters (header, description)>
+<!ELEMENT response_syntax (header, description)>
+<!ELEMENT validation (header, image)>
+<!ELEMENT url_text (#PCDATA)>
+<!ELEMENT header (#PCDATA)>
+<!ELEMENT description (#PCDATA)>
+<!ELEMENT image EMPTY>
+
+<!ATTLIST example_documentation id ID #REQUIRED>
+<!ATTLIST title fontsize (16|20|24) "20">
+<!ATTLIST header fontsize (8|12|14) "12">
+<!ATTLIST header isbold (true|false) "true">
+<!ATTLIST image src CDATA #REQUIRED>
+]>
+<api_documentation>
+  <title>Data Platform API Access</title>
+  <general_documentation>
+    <pricing>
+      <header isbold="false">Pricing</header>
+      <description>AWS API Gateway Pricing - https://aws.amazon.com/api-gateway/pricing/</description>
+      <description>AWS Lambda Pricing - https://aws.amazon.com/lambda/pricing/</description>
+      <description>AWS Athena Pricing - https://aws.amazon.com/athena/pricing/</description>
+    </pricing>
+    <architecture>
+      <header isbold="false">Architecture</header>
+      <image src="images/architectural_design.jpg" />
+    </architecture>
+    <tutorial>
+      <header>AWS Tutorial</header>
+      <description>https://docs.aws.amazon.com/apigateway/latest/developerguide/api-gateway-create-api-as-simple-proxy-for-lambda.html</description>
+    </tutorial>
+  </general_documentation>
+  <example_documentation id="id1">
+    <header fontsize="14">NWEA Growth Report API</header>
+    <description>The information below details the POC API that was created to test the delivery of mocked NWEA data. The design follows the architecture above.</description>
+    <url>
+      <header>URL</header>
+      <url_text>REDACTED</url_text>
+    </url>
+    <request_parameters>
+      <header>Request Parameters</header>
+      <description>{"studentids": [studentid1, studentid2, ...]} -if there are no parameters, every object is returned (limit right now for testing is 100) -studentids are currently mocked, some examples in the data set are 8514 and 6322</description>
+    </request_parameters>
+    <response_syntax>
+      <header>Response Syntax</header>
+      <description>[{"studentbid": "string","studentid": "string","schoolbid": "string","districtbid": "string","season": "string","termname": "string","subject": "string","grade": "string","testname": "string","testdate": "string","rit": "string","shown": "string","correct": "string","instructionalareas": {"score": "string","instructionalareaname": "string"},"norms": {"reference": "string","percentile": "string"}},{ ... }]</description>
+    </response_syntax>
+    <validation>
+      <header>Validating the API Works in Postman</header>
+      <image src="images/postman_validation.jpg" />
+    </validation>
+  </example_documentation>
+</api_documentation>
